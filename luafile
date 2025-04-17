@@ -15,39 +15,37 @@ local Window = Fluent:CreateWindow({
 local Tabs = {
     Teleports = Window:AddTab({ Title = "Teleports", Icon = "navigation" }),
     Character = Window:AddTab({ Title = "Character", Icon = "user" }),
+    AIM = Window:AddTab({ Title = "AIM", Icon = "crosshair" }),
+    MISC = Window:AddTab({ Title = "MISC", Icon = "settings-2" }),
     Discord = Window:AddTab({ Title = "Discord", Icon = "message-circle" }),
     Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
 
--- Teleport Buttons
+-- ========== TELEPORTS ==========
 Tabs.Teleports:AddButton({
     Title = "Teleport to Fort",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tpfort.github.io/refs/heads/main/Tpfort.lua"))()
     end
 })
-
 Tabs.Teleports:AddButton({
     Title = "Teleport to Castle",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/castletpfast.github.io/refs/heads/main/FASTCASTLE.lua"))()
     end
 })
-
 Tabs.Teleports:AddButton({
     Title = "Teleport to Sterling",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/newtptosterling/refs/heads/main/tptosterling.lua"))()
     end
 })
-
 Tabs.Teleports:AddButton({
     Title = "Teleport to Train",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/train.github.io/refs/heads/main/train.lua"))()
     end
 })
-
 Tabs.Teleports:AddButton({
     Title = "Teleport to End",
     Callback = function()
@@ -55,22 +53,167 @@ Tabs.Teleports:AddButton({
     end
 })
 
--- Character Tab (Пример — можно дописать слайдеры на скорость и прыжок)
+-- ========== CHARACTER ==========
 Tabs.Character:AddParagraph({
     Title = "Character Options",
     Content = "Скоро можно будет менять WalkSpeed и JumpPower"
 })
 
--- Discord Tab
+-- ========== AIM ==========
+
+local Flags = {
+    Camlock = false,
+    Hitbox = false,
+    ZeroSpread = false,
+    AutoReload = false
+}
+
+local camlockConnection
+
+local function getClosestNPC()
+    local shortest, target = math.huge, nil
+    for _, npc in pairs(workspace:GetDescendants()) do
+        if npc:IsA("Model") and npc:FindFirstChild("HumanoidRootPart") and npc:FindFirstChildOfClass("Humanoid") then
+            local dist = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - npc.HumanoidRootPart.Position).Magnitude
+            if dist < shortest then
+                shortest, target = dist, npc
+            end
+        end
+    end
+    return target
+end
+
+local function startCamlock()
+    camlockConnection = game:GetService("RunService").RenderStepped:Connect(function()
+        if not Flags.Camlock then return end
+        local npc = getClosestNPC()
+        if npc then
+            local cam = workspace.CurrentCamera
+            local targetPos = npc:FindFirstChild("Head") and npc.Head.Position or npc.HumanoidRootPart.Position
+            cam.CFrame = CFrame.new(cam.CFrame.Position, targetPos)
+        end
+    end)
+end
+
+local function stopCamlock()
+    if camlockConnection then
+        camlockConnection:Disconnect()
+        camlockConnection = nil
+    end
+end
+
+local function enlargeHitbox(npc)
+    for _, name in pairs({"Head", "Torso", "HumanoidRootPart"}) do
+        local part = npc:FindFirstChild(name)
+        if part then
+            part.Size = Vector3.new(5, 5, 5)
+            part.Transparency = 0.5
+            part.Material = Enum.Material.Neon
+            part.BrickColor = BrickColor.new("Bright red")
+        end
+    end
+end
+
+local function resetHitbox(npc)
+    for _, name in pairs({"Head", "Torso", "HumanoidRootPart"}) do
+        local part = npc:FindFirstChild(name)
+        if part then
+            part.Size = Vector3.new(2, 2, 1)
+            part.Transparency = 0
+            part.Material = Enum.Material.Plastic
+            part.BrickColor = BrickColor.new("Medium stone grey")
+        end
+    end
+end
+
+Tabs.AIM:AddToggle("Camlock", { Title = "Camlock", Default = false }):OnChanged(function(state)
+    Flags.Camlock = state
+    if state then startCamlock() else stopCamlock() end
+end)
+
+Tabs.AIM:AddToggle("Hitbox", { Title = "Hitbox Expander", Default = false }):OnChanged(function(state)
+    Flags.Hitbox = state
+    for _, npc in pairs(workspace:GetDescendants()) do
+        if npc:IsA("Model") and npc:FindFirstChildOfClass("Humanoid") then
+            if state then
+                enlargeHitbox(npc)
+            else
+                resetHitbox(npc)
+            end
+        end
+    end
+end)
+
+Tabs.AIM:AddToggle("ZeroSpread", { Title = "Zero Spread (заглушка)", Default = false }):OnChanged(function(state)
+    Flags.ZeroSpread = state
+end)
+
+Tabs.AIM:AddToggle("AutoReload", { Title = "Auto Reload (заглушка)", Default = false }):OnChanged(function(state)
+    Flags.AutoReload = state
+end)
+
+-- ========== MISC ==========
+
+local miscFlags = {
+    NoClip = false,
+    Highlight = false
+}
+
+local noclipConnection
+
+local function startNoClip()
+    noclipConnection = game:GetService("RunService").Stepped:Connect(function()
+        if miscFlags.NoClip and game.Players.LocalPlayer.Character then
+            for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
+                end
+            end
+        end
+    end)
+end
+
+local function stopNoClip()
+    if noclipConnection then
+        noclipConnection:Disconnect()
+        noclipConnection = nil
+    end
+end
+
+Tabs.MISC:AddToggle("NoClip", { Title = "NoClip", Default = false }):OnChanged(function(state)
+    miscFlags.NoClip = state
+    if state then startNoClip() else stopNoClip() end
+end)
+
+Tabs.MISC:AddToggle("Highlight", { Title = "Highlight NPCs", Default = false }):OnChanged(function(state)
+    miscFlags.Highlight = state
+    for _, npc in pairs(workspace:GetDescendants()) do
+        if npc:IsA("Model") and npc:FindFirstChild("HumanoidRootPart") and npc:FindFirstChildOfClass("Humanoid") then
+            if state then
+                local h = Instance.new("Highlight")
+                h.FillColor = Color3.fromRGB(255, 0, 0)
+                h.OutlineColor = Color3.fromRGB(255, 255, 255)
+                h.FillTransparency = 0.5
+                h.OutlineTransparency = 0
+                h.Parent = npc
+            else
+                for _, obj in pairs(npc:GetChildren()) do
+                    if obj:IsA("Highlight") then obj:Destroy() end
+                end
+            end
+        end
+    end
+end)
+
+-- ========== DISCORD ==========
 Tabs.Discord:AddParagraph({
     Title = "Join our Discord!",
     Content = "Get updates, scripts and more."
 })
-
 Tabs.Discord:AddButton({
     Title = "Join Discord",
     Callback = function()
-        setclipboard("https://discord.gg/yourinvitehere") -- Замени ссылку на свою
+        setclipboard("https://discord.gg/yourinvitehere")
         Fluent:Notify({
             Title = "Copied!",
             Content = "Discord invite copied to clipboard.",
@@ -79,7 +222,7 @@ Tabs.Discord:AddButton({
     end
 })
 
--- Addon & Config setup
+-- ========== SETTINGS ==========
 SaveManager:SetLibrary(Fluent)
 InterfaceManager:SetLibrary(Fluent)
 SaveManager:IgnoreThemeSettings()
