@@ -1,88 +1,161 @@
--- MAIN UI + BASE SETUP
-local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
-local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
-local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+-- инициализация
+local Fluent = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/main/source.lua"))()
+local LocalPlayer = game:GetService("Players").LocalPlayer
+local Camera = workspace.CurrentCamera
+local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
+local Lighting = game:GetService("Lighting")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CollectionService = game:GetService("CollectionService")
 
-local Window = Fluent:CreateWindow({
-    Title = "exotusizm's Hub | " .. Fluent.Version,
-    SubTitle = "by exotusizm",
-    TabWidth = 160,
-    Size = UDim2.fromOffset(580, 460),
-    Acrylic = true,
-    Theme = "Dark",
-    MinimizeKey = Enum.KeyCode.LeftControl
-})
+-- основной контроллер оружия
+local WeaponController = nil
+pcall(function()
+    WeaponController = require(ReplicatedStorage.Client.Controllers.WeaponController)
+end)
 
-local Tabs = {
-    Teleports = Window:AddTab({ Title = "Teleports", Icon = "navigation" }),
-    Character = Window:AddTab({ Title = "Character", Icon = "user" }),
-    Scripts = Window:AddTab({ Title = "Scripts", Icon = "terminal" }),
-    Discord = Window:AddTab({ Title = "Discord", Icon = "message-circle" }),
-    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+-- настройки
+local Settings = {
+    instantInteract = false,
+    fullBright = false,
+    noSpread = false,
+    autoReload = false
 }
 
--- TELEPORTS
-Tabs.Teleports:AddButton({ Title = "Teleport to Fort", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tpfort.github.io/refs/heads/main/Tpfort.lua"))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to Castle", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/castletpfast.github.io/refs/heads/main/FASTCASTLE.lua"))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to Sterling", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/newtptosterling/refs/heads/main/tptosterling.lua"))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to Train", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/train.github.io/refs/heads/main/train.lua"))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to End", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/DeadRails"))() end })
+local LightingBackup = {}
+local originalNamecall = nil
 
--- CHARACTER - FPS BOOST
-Tabs.Character:AddButton({
-    Title = "Boost FPS",
-    Callback = function()
-        setfpscap(120)
-        -- Insert FPS Boost Script Here
-        loadstring([[-- very long script here ]])() -- trimmed in UI
+-- функции
+local function modifyProximityPrompts()
+    for _, prompt in pairs(Workspace:GetDescendants()) do
+        if prompt:IsA("ProximityPrompt") then
+            if Settings.instantInteract then
+                prompt.HoldDuration = 0.05
+            else
+                local original = prompt:GetAttribute("OriginalHoldDuration")
+                if original then prompt.HoldDuration = original end
+            end
+        end
+    end
+end
+
+local function storeLighting()
+    LightingBackup = {
+        Ambient = Lighting.Ambient,
+        OutdoorAmbient = Lighting.OutdoorAmbient,
+        Brightness = Lighting.Brightness,
+        ColorShiftTop = Lighting.ColorShift_Top,
+        ColorShiftBottom = Lighting.ColorShift_Bottom
+    }
+end
+
+local function applyFullBright()
+    Lighting.Ambient = Color3.new(1, 1, 1)
+    Lighting.OutdoorAmbient = Color3.new(1, 1, 1)
+    Lighting.Brightness = 2
+    Lighting.ColorShift_Top = Color3.new(0, 0, 0)
+    Lighting.ColorShift_Bottom = Color3.new(0, 0, 0)
+end
+
+local function restoreFullBright()
+    for prop, value in pairs(LightingBackup) do
+        Lighting[prop] = value
+    end
+end
+
+local function setupNoSpread()
+    if originalNamecall then return end
+
+    originalNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+        local method = getnamecallmethod()
+        local args = {...}
+
+        if Settings.noSpread and method == "FireServer" and self.Name == "Shoot" and typeof(args[3]) == "CFrame" then
+            args[3] = Camera.CFrame
+        end
+
+        return originalNamecall(self, unpack(args))
+    end)
+end
+
+local function autoReload()
+    if not Settings.autoReload or not WeaponController then return end
+
+    for _, weapon in pairs(CollectionService:GetTagged("Weapon")) do
+        local state = weapon:FindFirstChild("ClientWeaponState")
+        local config = weapon:FindFirstChild("WeaponConfiguration")
+
+        if state and config then
+            local ammo = state:FindFirstChild("CurrentAmmo")
+            local reloading = state:FindFirstChild("IsReloading")
+            local mag = config:FindFirstChild("MagazineSize")
+
+            if ammo and reloading and mag and ammo.Value < mag.Value and not reloading.Value then
+                WeaponController.ReloadGun(weapon)
+            end
+        end
+    end
+end
+
+-- connections
+RunService.Heartbeat:Connect(function()
+    if Settings.autoReload then
+        autoReload()
+    end
+end)
+
+-- создание GUI
+local Window = Fluent:CreateWindow({
+    Title = "exotusizm Hub 💉",
+    SubTitle = "Dead Rails | by exotusizm",
+    TabWidth = 120,
+    Size = UDim2.fromOffset(480, 320),
+    Acrylic = true,
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.RightShift
+})
+
+-- вкладка Character
+local charTab = Window:AddTab({ Title = "Character", Icon = "👤" })
+
+charTab:AddToggle("instantInteract", {
+    Title = "⚡ Мгновенное взаимодействие",
+    Default = false,
+    Callback = function(value)
+        Settings.instantInteract = value
+        modifyProximityPrompts()
     end
 })
 
--- AIMLOCK (NPC LOCK)
-spawn(function()
-    loadstring([[-- dead rails wall hack aimbot. replaced here with your full provided script]])()
-end)
-
--- PLAYER ESP
-spawn(function()
-    local player = game.Players.LocalPlayer
-    local highlight = Instance.new("Highlight")
-    highlight.Name = "PlayerHighlightESP"
-    highlight.FillColor = Color3.new(1, 1, 1)
-    highlight.OutlineColor = Color3.fromRGB(85, 170, 255)
-    highlight.FillTransparency = 1
-    highlight.OutlineTransparency = 0
-    highlight.Parent = player.Character or player.CharacterAdded:Wait()
-end)
-
--- SCRIPTS
-Tabs.Scripts:AddButton({ Title = "Bypass Teleport", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AmareScripts/DeadRails/refs/heads/main/Bypass%25AntiCheat.lua"))() end })
-Tabs.Scripts:AddButton({ Title = "Nameless Admin", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/Nameless-Admin/main/Source"))() end })
-Tabs.Scripts:AddButton({ Title = "Dead Rails Script", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Loader"))() end })
-Tabs.Scripts:AddButton({ Title = "Dex Explorer (Classic)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/peyton2465/Dex/master/out.lua"))() end })
-Tabs.Scripts:AddButton({ Title = "Dex Explorer (New Blue)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ExploiterGuy/Aqua-Hub/refs/heads/main/Aqua%20Hub%20Explorer.txt"))() end })
-
--- DISCORD
-Tabs.Discord:AddParagraph({ Title = "Join our Discord!", Content = "Get updates, scripts and more." })
-Tabs.Discord:AddButton({
-    Title = "Join Discord",
-    Callback = function()
-        setclipboard("https://discord.gg/yourinvitehere")
-        Fluent:Notify({ Title = "Copied!", Content = "Discord invite copied to clipboard.", Duration = 5 })
+charTab:AddToggle("fullBright", {
+    Title = "💡 Полная яркость",
+    Default = false,
+    Callback = function(value)
+        Settings.fullBright = value
+        if value then
+            storeLighting()
+            applyFullBright()
+        else
+            restoreFullBright()
+        end
     end
 })
 
--- SETTINGS
-SaveManager:SetLibrary(Fluent)
-InterfaceManager:SetLibrary(Fluent)
-SaveManager:IgnoreThemeSettings()
-SaveManager:SetIgnoreIndexes({})
-InterfaceManager:SetFolder("exotusizmHub")
-SaveManager:SetFolder("exotusizmHub/Game")
-InterfaceManager:BuildInterfaceSection(Tabs.Settings)
-SaveManager:BuildConfigSection(Tabs.Settings)
+charTab:AddToggle("noSpread", {
+    Title = "🎯 Нулевой разброс",
+    Default = false,
+    Callback = function(value)
+        Settings.noSpread = value
+        if value then
+            setupNoSpread()
+        end
+    end
+})
 
--- STARTUP
-Window:SelectTab(1)
-Fluent:Notify({ Title = "exotusizm Hub Loaded", Content = "Script has been loaded successfully.", Duration = 8 })
-SaveManager:LoadAutoloadConfig()
+charTab:AddToggle("autoReload", {
+    Title = "🔄 Перезарядка после выстрела",
+    Default = false,
+    Callback = function(value)
+        Settings.autoReload = value
+    end
+})
