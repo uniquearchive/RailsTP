@@ -1,0 +1,98 @@
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+
+local Window = Fluent:CreateWindow({
+    Title = "exotusizm's Hub | " .. Fluent.Version,
+    SubTitle = "by exotusizm",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true,
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl
+})
+
+local Tabs = {
+    Teleports = Window:AddTab({ Title = "Teleports", Icon = "navigation" }),
+    Character = Window:AddTab({ Title = "Character", Icon = "user" }),
+    Discord = Window:AddTab({ Title = "Discord", Icon = "message-circle" }),
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+}
+
+-- Teleport Buttons
+Tabs.Teleports:AddButton({
+    Title = "Teleport to Fort",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tpfort.github.io/refs/heads/main/Tpfort.lua"))()
+    end
+})
+
+Tabs.Teleports:AddButton({
+    Title = "Teleport to Castle",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/castletpfast.github.io/refs/heads/main/FASTCASTLE.lua"))()
+    end
+})
+
+Tabs.Teleports:AddButton({
+    Title = "Teleport to Sterling",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/newtptosterling/refs/heads/main/tptosterling.lua"))()
+    end
+})
+
+Tabs.Teleports:AddButton({
+    Title = "Teleport to Train",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/train.github.io/refs/heads/main/train.lua"))()
+    end
+})
+
+Tabs.Teleports:AddButton({
+    Title = "Teleport to End",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/DeadRails"))()
+    end
+})
+
+-- Character Tab (Пример — можно дописать слайдеры на скорость и прыжок)
+Tabs.Character:AddParagraph({
+    Title = "Character Options",
+    Content = "Скоро можно будет менять WalkSpeed и JumpPower"
+})
+
+-- Discord Tab
+Tabs.Discord:AddParagraph({
+    Title = "Join our Discord!",
+    Content = "Get updates, scripts and more."
+})
+
+Tabs.Discord:AddButton({
+    Title = "Join Discord",
+    Callback = function()
+        setclipboard("https://discord.gg/yourinvitehere") -- Замени ссылку на свою
+        Fluent:Notify({
+            Title = "Copied!",
+            Content = "Discord invite copied to clipboard.",
+            Duration = 5
+        })
+    end
+})
+
+-- Addon & Config setup
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({})
+InterfaceManager:SetFolder("exotusizmHub")
+SaveManager:SetFolder("exotusizmHub/Game")
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
+
+Window:SelectTab(1)
+Fluent:Notify({
+    Title = "exotusizm Hub Loaded",
+    Content = "Script has been loaded successfully.",
+    Duration = 8
+})
+SaveManager:LoadAutoloadConfig()
