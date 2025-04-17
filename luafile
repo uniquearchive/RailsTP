@@ -31,25 +31,25 @@ Tabs.Teleports:AddButton({ Title = "Teleport to Train", Callback = function() lo
 Tabs.Teleports:AddButton({ Title = "Teleport to End", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tptoend.github.io/refs/heads/main/ringta.lua"))() end })
 
 -- CHARACTER - FPS BOOST
-local noclipConnection
-local function startNoClip()
-    noclipConnection = game:GetService("RunService").Stepped:Connect(function()
-        if game.Players.LocalPlayer.Character then
-            for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-                if part:IsA("BasePart") and part.CanCollide then
-                    part.CanCollide = false
-                end
-            end
-        end
-    end)
-end
+--local noclipConnection
+--local function startNoClip()
+--    noclipConnection = game:GetService("RunService").Stepped:Connect(function()
+ --       if game.Players.LocalPlayer.Character then
+--            for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+--                if part:IsA("BasePart") and part.CanCollide then
+--                    part.CanCollide = false
+ --               end
+--            end
+--        end
+--    end)
+--end
 
-local function stopNoClip()
-    if noclipConnection then
-        noclipConnection:Disconnect()
-        noclipConnection = nil
-    end
-end
+--local function stopNoClip()
+  --  if noclipConnection then
+  --      noclipConnection:Disconnect()
+ --       noclipConnection = nil
+--    end
+--end
 
 Tabs.Character:AddButton({
     Title = "Boost FPS",
@@ -72,9 +72,9 @@ Tabs.Character:AddButton({
 })
 Tabs.Character:AddToggle("Noclip", { Title = "Noclip", Default = false}):OnChanged(function(state)
     if state == true then
-        startNoClip()
+     --   startNoClip()
     else
-        stopNoClip()
+     --   stopNoClip()
 end)
 
 Tabs.Character:AddButton({ Title =  "FullBright", Callback = function()
