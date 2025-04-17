@@ -18,15 +18,10 @@ local Tabs = {
     Character = Window:AddTab({ Title = "Character", Icon = "user" }),
     Scripts = Window:AddTab({ Title = "Scripts", Icon = "terminal" }),
     Discord = Window:AddTab({ Title = "Discord", Icon = "message-circle" }),
-    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" }),
-    AIM = Window:AddTab({ Title = "AIM", Icon = "crosshair" })
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+  --  AIM = Window:AddTab({ Title = "AIM", Icon = "crosshair" })
 }
 
-local Flags = {
-    NoClip = false,
-    ZeroSpread = false,
-    AutoReload = false
-}
 -- TELEPORTS
 Tabs.Teleports:AddButton({ Title = "Teleport to Fort", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tpfort.github.io/refs/heads/main/Tpfort.lua"))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to Castle", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/castletpfast.github.io/refs/heads/main/FASTCASTLE.lua"))() end })
@@ -39,7 +34,7 @@ Tabs.Teleports:AddButton({ Title = "Teleport to End", Callback = function() load
 local noclipConnection
 local function startNoClip()
     noclipConnection = game:GetService("RunService").Stepped:Connect(function()
-        if Flags.NoClip and game.Players.LocalPlayer.Character then
+        if game.Players.LocalPlayer.Character then
             for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
                 if part:IsA("BasePart") and part.CanCollide then
                     part.CanCollide = false
@@ -105,13 +100,6 @@ end
 })
 
 -- AIM TAB
-
---Tabs.AIM:AddButton("ZeroSpread", { Title = "Zero Spread", Default = false }):OnChanged(function(state)
---    Flags.ZeroSpread = state
---end)
---Tabs.AIM:AddToggle("AutoReload", { Title = "Auto Reload", Default = false }):OnChanged(function(state)
---    Flags.AutoReload = state
---end)
 
 -- SCRIPTS
 Tabs.Scripts:AddButton({ Title = "Bypass Teleport", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AmareScripts/DeadRails/refs/heads/main/Bypass%25AntiCheat.lua"))() end })
