@@ -18,43 +18,108 @@ local Tabs = {
     Character = Window:AddTab({ Title = "Character", Icon = "user" }),
     Scripts = Window:AddTab({ Title = "Scripts", Icon = "terminal" }),
     Discord = Window:AddTab({ Title = "Discord", Icon = "message-circle" }),
-    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" }),
+    AIM = Window:AddTab({ Title = "AIM", Icon = "crosshair" })
 }
 
+local Flags = {
+    NoClip = false,
+    ZeroSpread = false,
+    AutoReload = false
+}
 -- TELEPORTS
 Tabs.Teleports:AddButton({ Title = "Teleport to Fort", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tpfort.github.io/refs/heads/main/Tpfort.lua"))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to Castle", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/castletpfast.github.io/refs/heads/main/FASTCASTLE.lua"))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to Sterling", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/newtptosterling/refs/heads/main/tptosterling.lua"))() end })
+Tabs.Teleports:AddButton({ Title = "Teleport to Tesla", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/tptotesla.github.io/refs/heads/main/Tptotesla.lua"))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to Train", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/train.github.io/refs/heads/main/train.lua"))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to End", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/DeadRails"))() end })
+Tabs.Teleports:AddButton({ Title = "Teleport to End", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tptoend.github.io/refs/heads/main/ringta.lua"))() end })
 
 -- CHARACTER - FPS BOOST
+local noclipConnection
+local function startNoClip()
+    noclipConnection = game:GetService("RunService").Stepped:Connect(function()
+        if Flags.NoClip and game.Players.LocalPlayer.Character then
+            for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                if part:IsA("BasePart") and part.CanCollide then
+                    part.CanCollide = false
+                end
+            end
+        end
+    end)
+end
+
+local function stopNoClip()
+    if noclipConnection then
+        noclipConnection:Disconnect()
+        noclipConnection = nil
+    end
+end
+
 Tabs.Character:AddButton({
     Title = "Boost FPS",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/soctrungkien/scriptroblox/refs/heads/main/Script/fpsboost.lua"))() -- trimmed in UI
     end
 })
-
--- PLAYER ESP
-spawn(function()
-    local player = game.Players.LocalPlayer
-    local highlight = Instance.new("Highlight")
-    highlight.Name = "PlayerHighlightESP"
-    highlight.FillColor = Color3.new(1, 1, 1)
-    highlight.OutlineColor = Color3.fromRGB(85, 170, 255)
-    highlight.FillTransparency = 1
-    highlight.OutlineTransparency = 0
-    highlight.Parent = player.Character or player.CharacterAdded:Wait()
+Tabs.Character:AddButton({
+    Title = "Highlight Players",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local highlight = Instance.new("Highlight")
+        highlight.Name = "PlayerHighlightESP"
+        highlight.FillColor = Color3.new(1, 1, 1)
+        highlight.OutlineColor = Color3.fromRGB(85, 170, 255)
+        highlight.FillTransparency = 1
+        highlight.OutlineTransparency = 0
+        highlight.Parent = player.Character or player.CharacterAdded:Wait()
+    end
+})
+Tabs.Character:AddToggle("Noclip", { Title = "Noclip", Default = false}):OnChanged(function(state)
+    if state == true then
+        startNoClip()
+    else
+        stopNoClip()
 end)
+
+Tabs.Character:AddButton({ Title =  "FullBright", Callback = function()
+    pcall(function() Lighting.Ambient = Color3.fromRGB(180, 180, 180) end)
+    pcall(function() Lighting.OutdoorAmbient = Color3.fromRGB(180, 180, 180) end)
+    pcall(function() Lighting.Brightness = 2 end)
+    pcall(function() Lighting.ColorShift_Top = Color3.fromRGB(0, 0, 0) end)
+    pcall(function() Lighting.ColorShift_Bottom = Color3.fromRGB(0, 0, 0) end)
+end
+})
+
+Tabs.Character:AddButton({ Title =  "Remove Fog", Callback = function()
+    pcall(function() Lighting.FogStart = 1000000 end)
+    pcall(function() Lighting.FogEnd = 2000000 end)
+    
+    local atmosphere = Lighting:FindFirstChildOfClass("Atmosphere")
+    if atmosphere then
+        pcall(function() atmosphere.Density = 0 end)
+        pcall(function() atmosphere.Offset = 0 end)
+        pcall(function() atmosphere.Haze = 0 end)
+    end
+end
+})
+
+-- AIM TAB
+
+--Tabs.AIM:AddButton("ZeroSpread", { Title = "Zero Spread", Default = false }):OnChanged(function(state)
+--    Flags.ZeroSpread = state
+--end)
+--Tabs.AIM:AddToggle("AutoReload", { Title = "Auto Reload", Default = false }):OnChanged(function(state)
+--    Flags.AutoReload = state
+--end)
 
 -- SCRIPTS
 Tabs.Scripts:AddButton({ Title = "Bypass Teleport", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AmareScripts/DeadRails/refs/heads/main/Bypass%25AntiCheat.lua"))() end })
 Tabs.Scripts:AddButton({ Title = "Nameless Admin", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/Nameless-Admin/main/Source"))() end })
 Tabs.Scripts:AddButton({ Title = "Dead Rails Script", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Loader"))() end })
 Tabs.Scripts:AddButton({ Title = "Dex Explorer (Classic)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/peyton2465/Dex/master/out.lua"))() end })
-Tabs.Scripts:AddButton({ Title = "Dex Explorer (New Blue)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ExploiterGuy/Aqua-Hub/refs/heads/main/Aqua%20Hub%20Explorer.txt"))() end })
 Tabs.Scripts:AddButton({ Title = "Aim Lock", Callback = function()  loadstring(game:HttpGet("https://raw.githubusercontent.com/Bac0nHck/Scripts/refs/heads/main/deadrails_camlock.lua"))() end })
+Tabs.Scripts:AddButton({ Title = "Dead Rails Script (2)", Callback = function()  loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/DeadRails"))() end })
 
 -- DISCORD
 Tabs.Discord:AddParagraph({ Title = "Join our Discord!", Content = "Get updates, scripts and more." })
