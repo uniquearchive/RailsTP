@@ -3,6 +3,10 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
+local Lighting = game:GetService("Lighting")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
 local Window = Fluent:CreateWindow({
     Title = "exotusizm's Hub | " .. Fluent.Version,
     SubTitle = "by exotusizm",
@@ -19,7 +23,6 @@ local Tabs = {
     Scripts = Window:AddTab({ Title = "Scripts", Icon = "terminal" }),
     Discord = Window:AddTab({ Title = "Discord", Icon = "message-circle" }),
     Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
-  --  AIM = Window:AddTab({ Title = "AIM", Icon = "crosshair" })
 }
 
 -- TELEPORTS
@@ -30,76 +33,93 @@ Tabs.Teleports:AddButton({ Title = "Teleport to Tesla", Callback = function() lo
 Tabs.Teleports:AddButton({ Title = "Teleport to Train", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/train.github.io/refs/heads/main/train.lua"))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to End", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tptoend.github.io/refs/heads/main/ringta.lua"))() end })
 
--- CHARACTER - FPS BOOST
---local noclipConnection
---local function startNoClip()
---    noclipConnection = game:GetService("RunService").Stepped:Connect(function()
- --       if game.Players.LocalPlayer.Character then
---            for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
---                if part:IsA("BasePart") and part.CanCollide then
---                    part.CanCollide = false
- --               end
---            end
---        end
---    end)
---end
+-- CHARACTER
+local noclipConnection
+local function startNoClip()
+    noclipConnection = RunService.Stepped:Connect(function()
+        local char = Players.LocalPlayer.Character
+        if char then
+            for _, part in pairs(char:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
+                end
+            end
+        end
+    end)
+end
 
---local function stopNoClip()
-  --  if noclipConnection then
-  --      noclipConnection:Disconnect()
- --       noclipConnection = nil
---    end
---end
+local function stopNoClip()
+    if noclipConnection then
+        noclipConnection:Disconnect()
+        noclipConnection = nil
+    end
+end
 
 Tabs.Character:AddButton({
     Title = "Boost FPS",
     Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/soctrungkien/scriptroblox/refs/heads/main/Script/fpsboost.lua"))() -- trimmed in UI
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/soctrungkien/scriptroblox/refs/heads/main/Script/fpsboost.lua"))()
     end
 })
+
 Tabs.Character:AddButton({
     Title = "Highlight Players",
     Callback = function()
-        local player = game.Players.LocalPlayer
-        local highlight = Instance.new("Highlight")
-        highlight.Name = "PlayerHighlightESP"
-        highlight.FillColor = Color3.new(1, 1, 1)
-        highlight.OutlineColor = Color3.fromRGB(85, 170, 255)
-        highlight.FillTransparency = 1
-        highlight.OutlineTransparency = 0
-        highlight.Parent = player.Character or player.CharacterAdded:Wait()
+        local function addHighlight()
+            local player = Players.LocalPlayer
+            local char = player.Character
+            if not char then return end
+            if char:FindFirstChild("PlayerHighlightESP") then return end
+
+            local highlight = Instance.new("Highlight")
+            highlight.Name = "PlayerHighlightESP"
+            highlight.FillColor = Color3.new(1, 1, 1)
+            highlight.OutlineColor = Color3.fromRGB(85, 170, 255)
+            highlight.FillTransparency = 1
+            highlight.OutlineTransparency = 0
+            highlight.Parent = char
+        end
+
+        addHighlight()
+        Players.LocalPlayer.CharacterAdded:Connect(function()
+            task.wait(1)
+            addHighlight()
+        end)
     end
 })
-Tabs.Character:AddToggle("Noclip", { Title = "Noclip", Default = false}):OnChanged(function(state)
-    if state == true then
-     --   startNoClip()
-    else
-     --   stopNoClip()
+
+Tabs.Character:AddToggle("Noclip", { Title = "Noclip", Default = false }):OnChanged(function(state)
+    if state then startNoClip() else stopNoClip() end
 end)
 
-Tabs.Character:AddButton({ Title =  "FullBright", Callback = function()
-    pcall(function() Lighting.Ambient = Color3.fromRGB(180, 180, 180) end)
-    pcall(function() Lighting.OutdoorAmbient = Color3.fromRGB(180, 180, 180) end)
-    pcall(function() Lighting.Brightness = 2 end)
-    pcall(function() Lighting.ColorShift_Top = Color3.fromRGB(0, 0, 0) end)
-    pcall(function() Lighting.ColorShift_Bottom = Color3.fromRGB(0, 0, 0) end)
-end
-})
-
-Tabs.Character:AddButton({ Title =  "Remove Fog", Callback = function()
-    pcall(function() Lighting.FogStart = 1000000 end)
-    pcall(function() Lighting.FogEnd = 2000000 end)
-    
-    local atmosphere = Lighting:FindFirstChildOfClass("Atmosphere")
-    if atmosphere then
-        pcall(function() atmosphere.Density = 0 end)
-        pcall(function() atmosphere.Offset = 0 end)
-        pcall(function() atmosphere.Haze = 0 end)
+Tabs.Character:AddButton({
+    Title = "FullBright",
+    Callback = function()
+        pcall(function()
+            Lighting.Ambient = Color3.fromRGB(180, 180, 180)
+            Lighting.OutdoorAmbient = Color3.fromRGB(180, 180, 180)
+            Lighting.Brightness = 2
+            Lighting.ColorShift_Top = Color3.new(0, 0, 0)
+            Lighting.ColorShift_Bottom = Color3.new(0, 0, 0)
+        end)
     end
-end
 })
 
--- AIM TAB
+Tabs.Character:AddButton({
+    Title = "Remove Fog",
+    Callback = function()
+        pcall(function()
+            Lighting.FogStart = 1000000
+            Lighting.FogEnd = 2000000
+            local atmosphere = Lighting:FindFirstChildOfClass("Atmosphere")
+            if atmosphere then
+                atmosphere.Density = 0
+                atmosphere.Offset = 0
+                atmosphere.Haze = 0
+            end
+        end)
+    end
+})
 
 -- SCRIPTS
 Tabs.Scripts:AddButton({ Title = "Bypass Teleport", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AmareScripts/DeadRails/refs/heads/main/Bypass%25AntiCheat.lua"))() end })
