@@ -1,4 +1,3 @@
--- MAIN UI + BASE SETUP
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
@@ -28,10 +27,10 @@ local Tabs = {
 -- TELEPORTS
 Tabs.Teleports:AddButton({ Title = "Teleport to Fort", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tpfort.github.io/refs/heads/main/Tpfort.lua"))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to Castle", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/castletpfast.github.io/refs/heads/main/FASTCASTLE.lua"))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to Sterling", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/newtptosterling/refs/heads/main/tptosterling.lua"))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to Tesla", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/tptotesla.github.io/refs/heads/main/Tptotesla.lua"))() end })
+--Tabs.Teleports:AddButton({ Title = "Teleport to Sterling", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/newtptosterling/refs/heads/main/tptosterling.lua"))() end })
+--Tabs.Teleports:AddButton({ Title = "Teleport to Tesla", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/tptotesla.github.io/refs/heads/main/Tptotesla.lua"))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to Train", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/train.github.io/refs/heads/main/train.lua"))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to End", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tptoend.github.io/refs/heads/main/ringta.lua"))() end })
+--Tabs.Teleports:AddButton({ Title = "Teleport to End", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tptoend.github.io/refs/heads/main/ringta.lua"))() end })
 
 -- CHARACTER
 local noclipConnection
