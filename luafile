@@ -36,11 +36,6 @@ Tabs.Character:AddButton({
     end
 })
 
--- AIMLOCK (NPC LOCK)
-spawn(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Bac0nHck/Scripts/refs/heads/main/deadrails_camlock.lua"))()
-end)
-
 -- PLAYER ESP
 spawn(function()
     local player = game.Players.LocalPlayer
@@ -59,6 +54,7 @@ Tabs.Scripts:AddButton({ Title = "Nameless Admin", Callback = function() loadstr
 Tabs.Scripts:AddButton({ Title = "Dead Rails Script", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Loader"))() end })
 Tabs.Scripts:AddButton({ Title = "Dex Explorer (Classic)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/peyton2465/Dex/master/out.lua"))() end })
 Tabs.Scripts:AddButton({ Title = "Dex Explorer (New Blue)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ExploiterGuy/Aqua-Hub/refs/heads/main/Aqua%20Hub%20Explorer.txt"))() end })
+Tabs.Scripts:AddButton({ Title = "Aim Lock", Callback = function()  loadstring(game:HttpGet("https://raw.githubusercontent.com/Bac0nHck/Scripts/refs/heads/main/deadrails_camlock.lua"))() end })
 
 -- DISCORD
 Tabs.Discord:AddParagraph({ Title = "Join our Discord!", Content = "Get updates, scripts and more." })
