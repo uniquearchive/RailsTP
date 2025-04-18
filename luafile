@@ -90,7 +90,7 @@ Tabs.Character:AddButton({
 })
 
 Tabs.Character:AddButton({
-    Title = "Get Horse Class (FREE)",
+    Title = "Get Horse Class [FREE]",
     Callback = function()
         local args = {
             [1] = "Horse"
@@ -100,11 +100,11 @@ Tabs.Character:AddButton({
                 [1] = "Horse"
             }
             game:GetService("ReplicatedStorage").Shared.RemotePromise.Remotes.C_EquipClass:FireServer(unpack(args))
-            StarterGui:SetCore("SendNotification", {
-            Title = "Now you have the class horse.",
-            Text = "Made by exotusizm",
-            Duration = 7
-            })
+          --  StarterGui:SetCore("SendNotification", {
+          --      Title = "Now you have the class horse.",
+           --     Text = "Made by exotusizm",
+           --     Duration = 7
+          --  })
         end
         
 })
