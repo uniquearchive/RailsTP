@@ -3,12 +3,13 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
+local StarterGui = game:GetService("StarterGui")
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 
 local Window = Fluent:CreateWindow({
-    Title = "exotusizm's Hub | " .. Fluent.Version,
+    Title = "exotusizm's Hub | 1.2",
     SubTitle = "by exotusizm",
     TabWidth = 160,
     Size = UDim2.fromOffset(580, 460),
@@ -28,7 +29,7 @@ local Tabs = {
 -- TELEPORTS
 Tabs.Teleports:AddButton({ Title = "Teleport to Fort", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tpfort.github.io/refs/heads/main/Tpfort.lua"))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to Castle", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/castletpfast.github.io/refs/heads/main/FASTCASTLE.lua"))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to Sterling", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/newtptosterling/refs/heads/main/tptosterling.lua"))() end })
+Tabs.Teleports:AddButton({ Title = "Teleport to Sterling", Callback = function()  loadstring(game:HttpGet('https://raw.githubusercontent.com/ringtaa/sterlingnotifcation.github.io/refs/heads/main/Sterling.lua'))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to Tesla", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/tptotesla.github.io/refs/heads/main/Tptotesla.lua"))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to Train", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/train.github.io/refs/heads/main/train.lua"))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to End", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tptoend.github.io/refs/heads/main/ringta.lua"))() end })
@@ -86,6 +87,26 @@ Tabs.Character:AddButton({
             addHighlight()
         end)
     end
+})
+
+Tabs.Character:AddButton({
+    Title = "Get Horse Class (FREE)",
+    Callback = function()
+        local args = {
+            [1] = "Horse"
+            }
+            game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("RemotePromise"):WaitForChild("Remotes"):WaitForChild("C_BuyClass"):FireServer(unpack(args))
+            local args = {
+                [1] = "Horse"
+            }
+            game:GetService("ReplicatedStorage").Shared.RemotePromise.Remotes.C_EquipClass:FireServer(unpack(args))
+            StarterGui:SetCore("SendNotification", {
+            Title = "Now you have the class horse.",
+            Text = "Made by exotusizm",
+            Duration = 7
+            })
+        end
+        
 })
 
 Tabs.Character:AddToggle("Noclip", { Title = "Noclip", Default = false }):OnChanged(function(state)
