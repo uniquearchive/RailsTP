@@ -37,11 +37,6 @@ Tabs.Teleports:AddButton({ Title = "Teleport to End", Callback = function() load
 
 
 -- === ESP ===
-Tabs.Visuals:AddParagraph({
-    Title = "ESP CONFIG",
-    Content = "ESP позволяет видеть игроков, NPC и предметы сквозь стены. Настройте дистанцию и включите визуализацию."
-})
-
 local espEnabled = false
 local espModule = nil
 local espConfig = {
@@ -63,7 +58,7 @@ local espConfig = {
     }
 }
 
-Tabs.Visuals:AddToggle("ESPEnabled", {
+Tabs.Visuals:AddToggle("ESP", {
     Title = "ESP",
     Default = false
 }):OnChanged(function(state)
@@ -82,7 +77,6 @@ end)
 
 Tabs.Visuals:AddSlider("ESPDistance", {
     Title = "ESP Distance",
-    Description = "Максимальное расстояние отображения объектов.",
     Default = 100,
     Min = 50,
     Max = 500,
@@ -91,15 +85,8 @@ Tabs.Visuals:AddSlider("ESPDistance", {
     espConfig.MaxDistance = value
 end)
 
--- === CHARACTER UTILS ===
-Tabs.Visuals:AddParagraph({
-    Title = "Character Utilities",
-    Content = "Полезные утилиты для освещения, FPS и движения персонажа."
-})
-
 Tabs.Visuals:AddButton({
     Title = "FullBright",
-    Description = "Убирает тёмный свет и улучшает освещенность карты.",
     Callback = function()
         pcall(function()
             Lighting.Ambient = Color3.fromRGB(180, 180, 180)
@@ -113,7 +100,6 @@ Tabs.Visuals:AddButton({
 
 Tabs.Visuals:AddButton({
     Title = "Remove Fog",
-    Description = "Убирает туман и атмосферные эффекты, делая видимость максимальной.",
     Callback = function()
         pcall(function()
             Lighting.FogStart = 1000000
@@ -130,13 +116,13 @@ Tabs.Visuals:AddButton({
 
 Tabs.Visuals:AddButton({
     Title = "Boost FPS",
-    Description = "Отключает графику и эффекты для увеличения производительности.",
+    Description = "Very low graphics",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/soctrungkien/scriptroblox/refs/heads/main/Script/fpsboost.lua"))()
     end
 })
 
-Tabs.Visuals:AddToggle("Noclip", { Title = "Noclip (проход сквозь стены)", Default = false }):OnChanged(function(state)
+Tabs.Visuals:AddToggle("Noclip", { Title = "Noclip", Default = false }):OnChanged(function(state)
     if state then
         noclipConnection = RunService.Stepped:Connect(function()
             local char = Players.LocalPlayer.Character
@@ -156,36 +142,8 @@ Tabs.Visuals:AddToggle("Noclip", { Title = "Noclip (проход сквозь с
     end
 end)
 
-Tabs.Visuals:AddButton({
-    Title = "Highlight Players (одноразово)",
-    Description = "Добавляет контур на вашего персонажа. Используется для теста.",
-    Callback = function()
-        local function addHighlight()
-            local player = Players.LocalPlayer
-            local char = player.Character
-            if not char then return end
-            if char:FindFirstChild("PlayerHighlightESP") then return end
-
-            local highlight = Instance.new("Highlight")
-            highlight.Name = "PlayerHighlightESP"
-            highlight.FillColor = Color3.new(1, 1, 1)
-            highlight.OutlineColor = Color3.fromRGB(85, 170, 255)
-            highlight.FillTransparency = 1
-            highlight.OutlineTransparency = 0
-            highlight.Parent = char
-        end
-
-        addHighlight()
-        Players.LocalPlayer.CharacterAdded:Connect(function()
-            task.wait(1)
-            addHighlight()
-        end)
-    end
-})
-
-Tabs.Visuals:AddButton({
+Tabs.Game:AddButton({
     Title = "Get Horse Class [FREE]",
-    Description = "Мгновенно получает класс 'Horse' и экипирует его.",
     Callback = function()
         local args = { "Horse" }
         game:GetService("ReplicatedStorage").Shared.RemotePromise.Remotes.C_BuyClass:FireServer(unpack(args))
