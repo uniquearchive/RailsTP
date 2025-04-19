@@ -155,6 +155,7 @@ Tabs.Game:AddButton({
 
 -- SCRIPTS
 Tabs.Scripts:AddButton({ Title = "Bypass Teleport", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AmareScripts/DeadRails/refs/heads/main/Bypass%25AntiCheat.lua"))() end })
+Tabs.Scripts:AddButton({ Title = "Maxim Gun Fly", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AmareScripts/DeadRails/refs/heads/main/FlyV2%25viaTurret.lua"))() end })
 Tabs.Scripts:AddButton({ Title = "Nameless Admin", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/Nameless-Admin/main/Source"))() end })
 Tabs.Scripts:AddButton({ Title = "Dead Rails Script", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Loader"))() end })
 Tabs.Scripts:AddButton({ Title = "Dex Explorer (Classic)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/peyton2465/Dex/master/out.lua"))() end })
@@ -183,5 +184,5 @@ SaveManager:BuildConfigSection(Tabs.Settings)
 
 -- STARTUP -- 
 Window:SelectTab(1)
-Fluent:Notify({ Title = "exotusizm Hub Loaded", Content = "Script has been loaded successfully.", Duration = 8 })
+Fluent:Notify({ Title = "Exotic Hub Loaded", Content = "Script has been loaded successfully.", Duration = 8 })
 SaveManager:LoadAutoloadConfig()
