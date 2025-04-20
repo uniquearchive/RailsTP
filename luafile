@@ -34,7 +34,7 @@ Tabs.Teleports:AddButton({ Title = "Teleport to Farm", Callback = function() loa
 Tabs.Teleports:AddButton({ Title = "Teleport to Bank", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tptobank.github.io/refs/heads/main/Banktp.lua"))() end }) 
 Tabs.Teleports:AddButton({ Title = "Teleport to Castle", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/castletpfast.github.io/refs/heads/main/FASTCASTLE.lua"))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to Sterling", Callback = function()  loadstring(game:HttpGet('https://raw.githubusercontent.com/ringtaa/sterlingnotifcation.github.io/refs/heads/main/Sterling.lua'))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to Tesla [Better]", Description = "You need to click multiple times untill it teleports you", Callback = function() loadstring(game:HttpGet(""))() end })
+Tabs.Teleports:AddButton({ Title = "Teleport to Tesla [Test]", Description = "You need to click multiple times until it teleports you", Callback = function() loadstring(game:HttpGet(""))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to Tesla ", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/tptotesla.github.io/refs/heads/main/Tptotesla.lua"))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to Train", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/train.github.io/refs/heads/main/train.lua"))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to End", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tptoend.github.io/refs/heads/main/ringta.lua"))() end })
@@ -118,9 +118,9 @@ Tabs.Visuals:AddSlider("ESPDistance", {
     espConfig.MaxDistance = value
 end)
 
-Tabs.Visuals:AddButton({ Title = "ESP Golden Eggs", Callback = function() pcall(function()  highlightAllGoldenEggs() end) end})
+--Tabs.Visuals:AddButton({ Title = "ESP Golden Eggs", Callback = function() pcall(function()  highlightAllGoldenEggs() end) end})
 
-Tabs.Visuals:AddButton({ Title = "ESP Unicorn", Callback = function() pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/uniesp.github.io/refs/heads/main/esp.lua"))() end) end})
+--Tabs.Visuals:AddButton({ Title = "ESP Unicorn", Callback = function() pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/uniesp.github.io/refs/heads/main/esp.lua"))() end) end})
 
 
 Tabs.Visuals:AddToggle("Noclip", { Title = "Noclip", Default = false }):OnChanged(function(state)
