@@ -28,7 +28,10 @@ local Tabs = {
 }
 
 -- TELEPORTS
+Tabs.Teleports:AddButton({ Title = "Teleport to Unicorn", Description = "[BETA]", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/unicorn.github.io/refs/heads/main/Test.lua"))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to Fort", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tpfort.github.io/refs/heads/main/Tpfort.lua"))() end })
+Tabs.Teleports:AddButton({ Title = "Teleport to Farm", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/tpfarm.github.io/refs/heads/main/tptofarm.lua"))() end })
+Tabs.Teleports:AddButton({ Title = "Teleport to Farm", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tptobank.github.io/refs/heads/main/Banktp.lua"))() end }) 
 Tabs.Teleports:AddButton({ Title = "Teleport to Castle", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/castletpfast.github.io/refs/heads/main/FASTCASTLE.lua"))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to Sterling", Callback = function()  loadstring(game:HttpGet('https://raw.githubusercontent.com/ringtaa/sterlingnotifcation.github.io/refs/heads/main/Sterling.lua'))() end })
 Tabs.Teleports:AddButton({ Title = "Teleport to Tesla [Better]", Description = "You need to click multiple times untill it teleports you", Callback = function() loadstring(game:HttpGet(""))() end })
@@ -59,6 +62,35 @@ local espConfig = {
     }
 }
 
+-- Function to add Highlight to a GoldenEgg model
+local function addHighlightToGoldenEgg(egg)
+    if egg:IsA("Model") and egg.Name == "GoldenEgg" then
+        -- Check if a Highlight already exists to avoid duplicates
+        if not egg:FindFirstChildOfClass("Highlight") then
+            -- Create a new Highlight
+            local highlight = Instance.new("Highlight")
+            highlight.Adornee = egg -- Set the model to be highlighted
+            highlight.FillColor = Color3.new(1, 1, 0) -- Yellow fill color
+            highlight.OutlineColor = Color3.new(0, 0, 0) -- Black outline color
+            highlight.Parent = egg -- Parent the Highlight to the GoldenEgg model
+        end
+    end
+end
+
+-- Function to highlight all GoldenEgg models in RuntimeItems
+local function highlightAllGoldenEggs()
+    local runtimeItemsFolder = game.Workspace:FindFirstChild("RuntimeItems") -- Ensure RuntimeItems is found
+
+    if runtimeItemsFolder then
+        -- Loop through all children in RuntimeItems
+        for _, item in ipairs(runtimeItemsFolder:GetChildren()) do
+            addHighlightToGoldenEgg(item) -- Apply highlight to each GoldenEgg
+        end
+    else
+        warn("RuntimeItems folder not found in Workspace!")
+    end
+end
+
 Tabs.Visuals:AddToggle("ESP", {
     Title = "ESP",
     Default = false
@@ -85,6 +117,13 @@ Tabs.Visuals:AddSlider("ESPDistance", {
 }):OnChanged(function(value)
     espConfig.MaxDistance = value
 end)
+
+Tabs.Visuals:AddButton({ Title = "ESP Golden Eggs", Callback = function() pcall(function()  highlightAllGoldenEggs() end) end})
+
+Tabs.Visuals:AddButton({ Title = "ESP Unicorn", Callback = function() pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/uniesp.github.io/refs/heads/main/esp.lua"))() end) end})
+
+
+
 
 Tabs.Visuals:AddToggle("Noclip", { Title = "Noclip", Default = false }):OnChanged(function(state)
     if state then
