@@ -194,10 +194,10 @@ Tabs.Game:AddButton({
 Tabs.Scripts:AddButton({ Title = "Bypass Teleport", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AmareScripts/DeadRails/refs/heads/main/Bypass%25AntiCheat.lua"))() end })
 Tabs.Scripts:AddButton({ Title = "Maxim Gun Fly", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AmareScripts/DeadRails/refs/heads/main/FlyV2%25viaTurret.lua"))() end })
 Tabs.Scripts:AddButton({ Title = "Nameless Admin", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/Nameless-Admin/main/Source"))() end })
-Tabs.Scripts:AddButton({ Title = "Dead Rails Script", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Loader"))() end })
+Tabs.Scripts:AddButton({ Title = "Null Fire Script", Description = "Includes killaura, autocollect bonds, autobond, no void, esp features and etc." , Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Loader"))() end })
 Tabs.Scripts:AddButton({ Title = "Dex Explorer (Classic)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/peyton2465/Dex/master/out.lua"))() end })
 Tabs.Scripts:AddButton({ Title = "Aim Lock", Callback = function()  loadstring(game:HttpGet("https://raw.githubusercontent.com/Bac0nHck/Scripts/refs/heads/main/deadrails_camlock.lua"))() end })
-Tabs.Scripts:AddButton({ Title = "Dead Rails Script (2)", Callback = function()  loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/DeadRails"))() end })
+Tabs.Scripts:AddButton({ Title = "Dead Rails [Gumanba]", Description = "Includes golden eggs esp,  unicorn esp, autobond, autocollet bonds, teleports and etc.", Callback = function()  loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/DeadRails"))() end })
 
 -- DISCORD
 Tabs.Discord:AddParagraph({ Title = "Join our Discord!", Content = "Get updates, scripts and more." })
