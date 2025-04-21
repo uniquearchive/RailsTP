@@ -1,225 +1,270 @@
--- MAIN UI + BASE SETUP
+-- KEY SYSTEM (Fluent UI based)
+local correctKey = "exotic2024" -- поменяй на свой ключ
+
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
-local StarterGui = game:GetService("StarterGui")
-local Lighting = game:GetService("Lighting")
-local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-
-local Window = Fluent:CreateWindow({
-    Title = "Exotic Hub | 1.4",
-    SubTitle = "by uniquearchive",
+local Window_Key = Fluent:CreateWindow({
+    Title = "Exotic Hub Key System",
+    SubTitle = "Enter your access key",
     TabWidth = 160,
-    Size = UDim2.fromOffset(580, 460),
+    Size = UDim2.fromOffset(400, 200),
     Acrylic = true,
     Theme = "Dark",
     MinimizeKey = Enum.KeyCode.LeftControl
 })
 
-local Tabs = {
-    Teleports = Window:AddTab({ Title = "Teleports", Icon = "navigation" }),
-    Visuals = Window:AddTab({ Title = "Visuals", Icon = "eye" }),
-    Game = Window:AddTab({ Title = "Game", Icon = "gamepad-2"}),
-    Scripts = Window:AddTab({ Title = "Scripts", Icon = "terminal" }),
-    Discord = Window:AddTab({ Title = "Discord", Icon = "message-circle" }),
-    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
-}
+local KeyTab = Window_Key:AddTab({ Title = "Key", Icon = "lock" })
 
--- TELEPORTS
-Tabs.Teleports:AddButton({ Title = "Find Unicorn", Description = "[BETA]", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/unicorn.github.io/refs/heads/main/Test.lua"))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to Fort", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tpfort.github.io/refs/heads/main/Tpfort.lua"))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to Farm", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/tpfarm.github.io/refs/heads/main/tptofarm.lua"))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to Bank", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tptobank.github.io/refs/heads/main/Banktp.lua"))() end }) 
-Tabs.Teleports:AddButton({ Title = "Teleport to Castle", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/castletpfast.github.io/refs/heads/main/FASTCASTLE.lua"))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to Sterling", Callback = function()  loadstring(game:HttpGet('https://raw.githubusercontent.com/ringtaa/sterlingnotifcation.github.io/refs/heads/main/Sterling.lua'))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to Tesla [Test]", Description = "You need to click multiple times until it teleports you", Callback = function() loadstring(game:HttpGet(""))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to Tesla ", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/tptotesla.github.io/refs/heads/main/Tptotesla.lua"))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to Train", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/train.github.io/refs/heads/main/train.lua"))() end })
-Tabs.Teleports:AddButton({ Title = "Teleport to End", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tptoend.github.io/refs/heads/main/ringta.lua"))() end })
+local userKey = ""
 
-
--- === ESP ===
-local espEnabled = false
-local espModule = nil
-local espConfig = {
-    Enabled = true,
-    MaxDistance = 100,
-    Colors = {
-        Player = Color3.fromRGB(0, 0, 255),
-        NPC = Color3.fromRGB(255, 0, 0),
-        Default = Color3.fromRGB(200, 200, 200),
-        Corpse = Color3.fromRGB(139, 69, 19),
-        Fuel = Color3.fromRGB(255, 165, 0),
-        Ammo = Color3.fromRGB(0, 255, 255),
-        Weapon = Color3.fromRGB(255, 0, 255),
-        Junk = Color3.fromRGB(100, 100, 100),
-        Healing = Color3.fromRGB(0, 255, 0),
-        Gold = Color3.fromRGB(255, 215, 0),
-        Silver = Color3.fromRGB(192, 192, 192),
-        Rare = Color3.fromRGB(160, 32, 240)
-    }
-}
-
--- Function to add Highlight to a GoldenEgg model
-local function addHighlightToGoldenEgg(egg)
-    if egg:IsA("Model") and egg.Name == "GoldenEgg" then
-        -- Check if a Highlight already exists to avoid duplicates
-        if not egg:FindFirstChildOfClass("Highlight") then
-            -- Create a new Highlight
-            local highlight = Instance.new("Highlight")
-            highlight.Adornee = egg -- Set the model to be highlighted
-            highlight.FillColor = Color3.new(1, 1, 0) -- Yellow fill color
-            highlight.OutlineColor = Color3.new(0, 0, 0) -- Black outline color
-            highlight.Parent = egg -- Parent the Highlight to the GoldenEgg model
-        end
+KeyTab:AddInput("KeyInput", {
+    Title = "Enter Key",
+    Default = "",
+    Placeholder = "your-key-here",
+    Numeric = false,
+    Finished = true,
+    Callback = function(value)
+        userKey = value
     end
-end
+})
 
--- Function to highlight all GoldenEgg models in RuntimeItems
-local function highlightAllGoldenEggs()
-    local runtimeItemsFolder = game.Workspace:FindFirstChild("RuntimeItems") -- Ensure RuntimeItems is found
+KeyTab:AddButton({
+    Title = "Submit Key",
+    Callback = function()
+        if userKey == correctKey then
+            Fluent:Notify({ Title = "Access Granted", Content = "Correct key. Loading script...", Duration = 4 })
 
-    if runtimeItemsFolder then
-        -- Loop through all children in RuntimeItems
-        for _, item in ipairs(runtimeItemsFolder:GetChildren()) do
-            addHighlightToGoldenEgg(item) -- Apply highlight to each GoldenEgg
-        end
-    else
-        warn("RuntimeItems folder not found in Workspace!")
-    end
-end
-
-Tabs.Visuals:AddToggle("ESP", {
-    Title = "ESP",
-    Default = false
-    }):OnChanged(function(state)
-    espEnabled = state
-    if state then
-        local baseUrl = "https://raw.githubusercontent.com/LxckStxp/DeadRails/main/modules/"
-        local Utilities = loadstring(game:HttpGet(baseUrl .. "Utilities.lua"))()
-        espModule = loadstring(game:HttpGet(baseUrl .. "ESP/ESP.lua"))()(espConfig, Utilities)
-        espModule.Initialize()
-    else
-        if espModule and espModule.Unload then
-            espModule.Unload()
-        end
-    end
-end)
-
-Tabs.Visuals:AddSlider("ESPDistance", {
-    Title = "ESP Distance",
-    Default = 100,
-    Min = 50,
-    Max = 500,
-    Rounding = 0
-}):OnChanged(function(value)
-    espConfig.MaxDistance = value
-end)
-
---Tabs.Visuals:AddButton({ Title = "ESP Golden Eggs", Callback = function() pcall(function()  highlightAllGoldenEggs() end) end})
-
---Tabs.Visuals:AddButton({ Title = "ESP Unicorn", Callback = function() pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/uniesp.github.io/refs/heads/main/esp.lua"))() end) end})
-
-
-Tabs.Visuals:AddToggle("Noclip", { Title = "Noclip", Default = false }):OnChanged(function(state)
-    if state then
-        noclipConnection = RunService.Stepped:Connect(function()
-            local char = Players.LocalPlayer.Character
-            if char then
-                for _, part in pairs(char:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.CanCollide = false
-                    end
+            task.wait(1)
+            Window_Key:Destroy() 
+            -- MAIN UI + BASE SETUP
+            local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+            local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+            local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+            
+            local StarterGui = game:GetService("StarterGui")
+            local Lighting = game:GetService("Lighting")
+            local RunService = game:GetService("RunService")
+            local Players = game:GetService("Players")
+            
+            local Window = Fluent:CreateWindow({
+            Title = "Exotic Hub | 1.4",
+            SubTitle = "by uniquearchive",
+            TabWidth = 160,
+            Size = UDim2.fromOffset(580, 460),
+            Acrylic = true,
+            Theme = "Dark",
+            MinimizeKey = Enum.KeyCode.LeftControl
+            })
+            
+            local Tabs = {
+            Teleports = Window:AddTab({ Title = "Teleports", Icon = "navigation" }),
+            Visuals = Window:AddTab({ Title = "Visuals", Icon = "eye" }),
+            Game = Window:AddTab({ Title = "Game", Icon = "gamepad-2"}),
+            Scripts = Window:AddTab({ Title = "Scripts", Icon = "terminal" }),
+            Discord = Window:AddTab({ Title = "Discord", Icon = "message-circle" }),
+            Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+            }
+            
+            -- TELEPORTS
+            Tabs.Teleports:AddButton({ Title = "Find Unicorn", Description = "[BETA]", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/unicorn.github.io/refs/heads/main/Test.lua"))() end })
+            Tabs.Teleports:AddButton({ Title = "Teleport to Fort", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tpfort.github.io/refs/heads/main/Tpfort.lua"))() end })
+            Tabs.Teleports:AddButton({ Title = "Teleport to Farm", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/tpfarm.github.io/refs/heads/main/tptofarm.lua"))() end })
+            Tabs.Teleports:AddButton({ Title = "Teleport to Bank", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tptobank.github.io/refs/heads/main/Banktp.lua"))() end }) 
+            Tabs.Teleports:AddButton({ Title = "Teleport to Castle", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/castletpfast.github.io/refs/heads/main/FASTCASTLE.lua"))() end })
+            Tabs.Teleports:AddButton({ Title = "Teleport to Sterling", Callback = function()  loadstring(game:HttpGet('https://raw.githubusercontent.com/ringtaa/sterlingnotifcation.github.io/refs/heads/main/Sterling.lua'))() end })
+            Tabs.Teleports:AddButton({ Title = "Teleport to Tesla [Test]", Description = "You need to click multiple times until it teleports you", Callback = function() loadstring(game:HttpGet(""))() end })
+            Tabs.Teleports:AddButton({ Title = "Teleport to Tesla ", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/tptotesla.github.io/refs/heads/main/Tptotesla.lua"))() end })
+            Tabs.Teleports:AddButton({ Title = "Teleport to Train", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/train.github.io/refs/heads/main/train.lua"))() end })
+            Tabs.Teleports:AddButton({ Title = "Teleport to End", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tptoend.github.io/refs/heads/main/ringta.lua"))() end })
+            
+            
+            -- === ESP ===
+            local espEnabled = false
+            local espModule = nil
+            local espConfig = {
+            Enabled = true,
+            MaxDistance = 100,
+            Colors = {
+                Player = Color3.fromRGB(0, 0, 255),
+                NPC = Color3.fromRGB(255, 0, 0),
+                Default = Color3.fromRGB(200, 200, 200),
+                Corpse = Color3.fromRGB(139, 69, 19),
+                Fuel = Color3.fromRGB(255, 165, 0),
+                Ammo = Color3.fromRGB(0, 255, 255),
+                Weapon = Color3.fromRGB(255, 0, 255),
+                Junk = Color3.fromRGB(100, 100, 100),
+                Healing = Color3.fromRGB(0, 255, 0),
+                Gold = Color3.fromRGB(255, 215, 0),
+                Silver = Color3.fromRGB(192, 192, 192),
+                Rare = Color3.fromRGB(160, 32, 240)
+            }
+            }
+            
+            -- Function to add Highlight to a GoldenEgg model
+            local function addHighlightToGoldenEgg(egg)
+            if egg:IsA("Model") and egg.Name == "GoldenEgg" then
+                -- Check if a Highlight already exists to avoid duplicates
+                if not egg:FindFirstChildOfClass("Highlight") then
+                    -- Create a new Highlight
+                    local highlight = Instance.new("Highlight")
+                    highlight.Adornee = egg -- Set the model to be highlighted
+                    highlight.FillColor = Color3.new(1, 1, 0) -- Yellow fill color
+                    highlight.OutlineColor = Color3.new(0, 0, 0) -- Black outline color
+                    highlight.Parent = egg -- Parent the Highlight to the GoldenEgg model
                 end
             end
-        end)
-    else
-        if noclipConnection then
-            noclipConnection:Disconnect()
-            noclipConnection = nil
+            end
+            
+            -- Function to highlight all GoldenEgg models in RuntimeItems
+            local function highlightAllGoldenEggs()
+            local runtimeItemsFolder = game.Workspace:FindFirstChild("RuntimeItems") -- Ensure RuntimeItems is found
+            
+            if runtimeItemsFolder then
+                -- Loop through all children in RuntimeItems
+                for _, item in ipairs(runtimeItemsFolder:GetChildren()) do
+                    addHighlightToGoldenEgg(item) -- Apply highlight to each GoldenEgg
+                end
+            else
+                warn("RuntimeItems folder not found in Workspace!")
+            end
+            end
+            
+            Tabs.Visuals:AddToggle("ESP", {
+            Title = "ESP",
+            Default = false
+            }):OnChanged(function(state)
+            espEnabled = state
+            if state then
+                local baseUrl = "https://raw.githubusercontent.com/LxckStxp/DeadRails/main/modules/"
+                local Utilities = loadstring(game:HttpGet(baseUrl .. "Utilities.lua"))()
+                espModule = loadstring(game:HttpGet(baseUrl .. "ESP/ESP.lua"))()(espConfig, Utilities)
+                espModule.Initialize()
+            else
+                if espModule and espModule.Unload then
+                    espModule.Unload()
+                end
+            end
+            end)
+            
+            Tabs.Visuals:AddSlider("ESPDistance", {
+            Title = "ESP Distance",
+            Default = 100,
+            Min = 50,
+            Max = 500,
+            Rounding = 0
+            }):OnChanged(function(value)
+            espConfig.MaxDistance = value
+            end)
+            
+            --Tabs.Visuals:AddButton({ Title = "ESP Golden Eggs", Callback = function() pcall(function()  highlightAllGoldenEggs() end) end})
+            
+            --Tabs.Visuals:AddButton({ Title = "ESP Unicorn", Callback = function() pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/uniesp.github.io/refs/heads/main/esp.lua"))() end) end})
+            
+            
+            Tabs.Visuals:AddToggle("Noclip", { Title = "Noclip", Default = false }):OnChanged(function(state)
+            if state then
+                noclipConnection = RunService.Stepped:Connect(function()
+                    local char = Players.LocalPlayer.Character
+                    if char then
+                        for _, part in pairs(char:GetDescendants()) do
+                            if part:IsA("BasePart") then
+                                part.CanCollide = false
+                            end
+                        end
+                    end
+                end)
+            else
+                if noclipConnection then
+                    noclipConnection:Disconnect()
+                    noclipConnection = nil
+                end
+            end
+            end)
+            
+            Tabs.Visuals:AddButton({
+            Title = "FullBright",
+            Callback = function()
+                pcall(function()
+                    Lighting.Ambient = Color3.fromRGB(180, 180, 180)
+                    Lighting.OutdoorAmbient = Color3.fromRGB(180, 180, 180)
+                    Lighting.Brightness = 2
+                    Lighting.ColorShift_Top = Color3.new(0, 0, 0)
+                    Lighting.ColorShift_Bottom = Color3.new(0, 0, 0)
+                end)
+            end
+            })
+            
+            Tabs.Visuals:AddButton({
+            Title = "Remove Fog",
+            Callback = function()
+                pcall(function()
+                    Lighting.FogStart = 1000000
+                    Lighting.FogEnd = 2000000
+                    local atmosphere = Lighting:FindFirstChildOfClass("Atmosphere")
+                    if atmosphere then
+                        atmosphere.Density = 0
+                        atmosphere.Offset = 0
+                        atmosphere.Haze = 0
+                    end
+                end)
+            end
+            })
+            
+            Tabs.Visuals:AddButton({
+            Title = "Boost FPS",
+            Description = "Very low graphics",
+            Callback = function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/soctrungkien/scriptroblox/refs/heads/main/Script/fpsboost.lua"))()
+            end
+            })
+            
+            Tabs.Game:AddButton({
+            Title = "Get Horse Class [FREE]",
+            Callback = function()
+                local args = { "Horse" }
+                game:GetService("ReplicatedStorage").Shared.RemotePromise.Remotes.C_BuyClass:FireServer(unpack(args))
+                game:GetService("ReplicatedStorage").Shared.RemotePromise.Remotes.C_EquipClass:FireServer(unpack(args))
+            end
+            })
+            
+            
+            -- SCRIPTS
+            Tabs.Scripts:AddButton({ Title = "Bypass Teleport", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AmareScripts/DeadRails/refs/heads/main/Bypass%25AntiCheat.lua"))() end })
+            Tabs.Scripts:AddButton({ Title = "Maxim Gun Fly", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AmareScripts/DeadRails/refs/heads/main/FlyV2%25viaTurret.lua"))() end })
+            Tabs.Scripts:AddButton({ Title = "Nameless Admin", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/Nameless-Admin/main/Source"))() end })
+            Tabs.Scripts:AddButton({ Title = "Null Fire Script", Description = "Includes killaura, autocollect bonds, autobond, no void, esp features and etc." , Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Loader"))() end })
+            Tabs.Scripts:AddButton({ Title = "Dex Explorer (Classic)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/peyton2465/Dex/master/out.lua"))() end })
+            Tabs.Scripts:AddButton({ Title = "Aim Lock", Callback = function()  loadstring(game:HttpGet("https://raw.githubusercontent.com/Bac0nHck/Scripts/refs/heads/main/deadrails_camlock.lua"))() end })
+            Tabs.Scripts:AddButton({ Title = "Dead Rails [Gumanba]", Description = "Includes golden eggs esp,  unicorn esp, autobond, autocollet bonds, teleports and etc.", Callback = function()  loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/DeadRails"))() end })
+            
+            -- DISCORD
+            Tabs.Discord:AddParagraph({ Title = "Join our Discord!", Content = "Get updates, scripts and more." })
+            Tabs.Discord:AddButton({
+            Title = "Join Discord",
+            Callback = function()
+                setclipboard("https://discord.gg/yourinvitehere")
+                Fluent:Notify({ Title = "Copied!", Content = "Discord invite copied to clipboard.", Duration = 5 })
+            end
+            })
+            
+            -- SETTINGS
+            SaveManager:SetLibrary(Fluent)
+            InterfaceManager:SetLibrary(Fluent)
+            SaveManager:IgnoreThemeSettings()
+            SaveManager:SetIgnoreIndexes({})
+            InterfaceManager:SetFolder("exotusizmHub")
+            SaveManager:SetFolder("exotusizmHub/Game")
+            InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+            SaveManager:BuildConfigSection(Tabs.Settings)
+            
+            -- STARTUP -- 
+            Window:SelectTab(1)
+            Fluent:Notify({ Title = "Exotic Hub Loaded", Content = "Script has been loaded successfully.", Duration = 8 })
+            SaveManager:LoadAutoloadConfig()
+        else
+            Fluent:Notify({ Title = "Access Denied", Content = "Invalid key. Please try again.", Duration = 5 })
         end
     end
-end)
-
-Tabs.Visuals:AddButton({
-    Title = "FullBright",
-    Callback = function()
-        pcall(function()
-            Lighting.Ambient = Color3.fromRGB(180, 180, 180)
-            Lighting.OutdoorAmbient = Color3.fromRGB(180, 180, 180)
-            Lighting.Brightness = 2
-            Lighting.ColorShift_Top = Color3.new(0, 0, 0)
-            Lighting.ColorShift_Bottom = Color3.new(0, 0, 0)
-        end)
-    end
 })
-
-Tabs.Visuals:AddButton({
-    Title = "Remove Fog",
-    Callback = function()
-        pcall(function()
-            Lighting.FogStart = 1000000
-            Lighting.FogEnd = 2000000
-            local atmosphere = Lighting:FindFirstChildOfClass("Atmosphere")
-            if atmosphere then
-                atmosphere.Density = 0
-                atmosphere.Offset = 0
-                atmosphere.Haze = 0
-            end
-        end)
-    end
-})
-
-Tabs.Visuals:AddButton({
-    Title = "Boost FPS",
-    Description = "Very low graphics",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/soctrungkien/scriptroblox/refs/heads/main/Script/fpsboost.lua"))()
-    end
-})
-
-Tabs.Game:AddButton({
-    Title = "Get Horse Class [FREE]",
-    Callback = function()
-        local args = { "Horse" }
-        game:GetService("ReplicatedStorage").Shared.RemotePromise.Remotes.C_BuyClass:FireServer(unpack(args))
-        game:GetService("ReplicatedStorage").Shared.RemotePromise.Remotes.C_EquipClass:FireServer(unpack(args))
-    end
-})
-
-
--- SCRIPTS
-Tabs.Scripts:AddButton({ Title = "Bypass Teleport", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AmareScripts/DeadRails/refs/heads/main/Bypass%25AntiCheat.lua"))() end })
-Tabs.Scripts:AddButton({ Title = "Maxim Gun Fly", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AmareScripts/DeadRails/refs/heads/main/FlyV2%25viaTurret.lua"))() end })
-Tabs.Scripts:AddButton({ Title = "Nameless Admin", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/Nameless-Admin/main/Source"))() end })
-Tabs.Scripts:AddButton({ Title = "Null Fire Script", Description = "Includes killaura, autocollect bonds, autobond, no void, esp features and etc." , Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Loader"))() end })
-Tabs.Scripts:AddButton({ Title = "Dex Explorer (Classic)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/peyton2465/Dex/master/out.lua"))() end })
-Tabs.Scripts:AddButton({ Title = "Aim Lock", Callback = function()  loadstring(game:HttpGet("https://raw.githubusercontent.com/Bac0nHck/Scripts/refs/heads/main/deadrails_camlock.lua"))() end })
-Tabs.Scripts:AddButton({ Title = "Dead Rails [Gumanba]", Description = "Includes golden eggs esp,  unicorn esp, autobond, autocollet bonds, teleports and etc.", Callback = function()  loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/DeadRails"))() end })
-
--- DISCORD
-Tabs.Discord:AddParagraph({ Title = "Join our Discord!", Content = "Get updates, scripts and more." })
-Tabs.Discord:AddButton({
-    Title = "Join Discord",
-    Callback = function()
-        setclipboard("https://discord.gg/yourinvitehere")
-        Fluent:Notify({ Title = "Copied!", Content = "Discord invite copied to clipboard.", Duration = 5 })
-    end
-})
-
--- SETTINGS
-SaveManager:SetLibrary(Fluent)
-InterfaceManager:SetLibrary(Fluent)
-SaveManager:IgnoreThemeSettings()
-SaveManager:SetIgnoreIndexes({})
-InterfaceManager:SetFolder("exotusizmHub")
-SaveManager:SetFolder("exotusizmHub/Game")
-InterfaceManager:BuildInterfaceSection(Tabs.Settings)
-SaveManager:BuildConfigSection(Tabs.Settings)
-
--- STARTUP -- 
-Window:SelectTab(1)
-Fluent:Notify({ Title = "Exotic Hub Loaded", Content = "Script has been loaded successfully.", Duration = 8 })
-SaveManager:LoadAutoloadConfig()
