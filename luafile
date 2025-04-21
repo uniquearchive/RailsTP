@@ -6,23 +6,23 @@ local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/d
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
 local Window_Key = Fluent:CreateWindow({
-    Title = "Exotic Hub Key System",
-    SubTitle = "Enter your access key",
+    Title = "Exotic Hub",
     TabWidth = 160,
-    Size = UDim2.fromOffset(400, 200),
+    Size = UDim2.fromOffset(580, 460),
     Acrylic = true,
     Theme = "Dark",
-    MinimizeKey = Enum.KeyCode.LeftControl
+    MinimizeKey = Enum.KeyCode.LeftAlt
 })
 
 local KeyTab = Window_Key:AddTab({ Title = "Key", Icon = "lock" })
 
 local userKey = ""
+Window_Key:SelectTab(1)
 
 KeyTab:AddInput("KeyInput", {
     Title = "Enter Key",
     Default = "",
-    Placeholder = "your-key-here",
+    Placeholder = "Key",
     Numeric = false,
     Finished = true,
     Callback = function(value)
