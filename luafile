@@ -33,7 +33,7 @@ KeyTab:AddInput("KeyInput", {
 
 KeyTab:AddButton({
     Title = "Submit Key",
-    Description = "If",
+    Description = "If the key does not work, enter it again and try again",
     Callback = function()
         if userKey == correctKey then
             Fluent:Notify({ Title = "Access Granted", Content = "Correct key. Loading script...", Duration = 4 })
