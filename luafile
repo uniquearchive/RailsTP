@@ -33,6 +33,7 @@ KeyTab:AddInput("KeyInput", {
 
 KeyTab:AddButton({
     Title = "Submit Key",
+    Description = "If the key does not work, enter it again and try again [There should be no gaps]",
     Callback = function()
         if userKey == correctKey then
             Fluent:Notify({ Title = "Access Granted", Content = "Correct key. Loading script...", Duration = 4 })
@@ -299,4 +300,3 @@ KeyTab:AddButton({
         Fluent:Notify({ Title = "Copied!", Content = "Paste link into your browser to get key", Duration = 5 })
   end
 })
-KeyTab:AddParagraph({ Title = "Help", Description = "If the key does not work, enter it again and try again [There should be no gaps]" })
